@@ -255,7 +255,8 @@ class MongoClient
             $this->replSet = $this->options['replicaSet'];
         }
         if (isset($this->options['readPreference'])) {
-            $this->setReadPreference($this->options['readPreference'], $this->options['readPreferenceTags']);
+            $tags = isset($this->options[ 'readPreferenceTags' ]) ? $this->options[ 'readPreferenceTags' ] : NULL;
+            $this->setReadPreference($this->options['readPreference'], $tags );
         }
 
         if (!isset($this->options['connect']) || $this->options['connect'] === true) {
@@ -503,7 +504,7 @@ class MongoClient
         $tagsets = isset($readPreference['tagsets']) ? $readPreference['tagsets'] : [[]];
         foreach ($tagsets as $tagset) {
             foreach ($this->replSetStatus['members'] as $key => $member) {
-                $tags = $this->replSetConf['members'][$key]['tags'] ?: [];
+                $tags = isset($this->replSetConf['members'][$key]['tags']) ? $this->replSetConf['members'][$key]['tags'] : [];
                 if (in_array($member['stateStr'], $allowedServerTypes) && array_intersect($tagset, $tags) === $tagset) {
                     $candidates[] = $member;
                 }
